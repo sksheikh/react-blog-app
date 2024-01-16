@@ -22,6 +22,10 @@ const blogData = [
 export default function Blogs() {
     const [blogs, setBlogs] = useState(blogData);
     const [show, setShow] = useState(true);
+    const [formData, setFormData] = useState({title: '', description: ''});
+    const [error, setError] = useState({});
+
+    // console.log(formData)
 
     const handleShow = () => {
       setShow(true)
@@ -29,6 +33,27 @@ export default function Blogs() {
 
     const handleHide = () => {
       setShow(false)
+    }
+
+    const handleChange = (e) => {
+      const {name, value} = e.target;
+      setFormData((prevFormData) => 
+        ({...prevFormData, [name]: value})
+      )
+    }
+    console.log(formData);
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      const intputError = {};
+      if(formData.title.trim() === '' || formData.title.trim() === null){
+        intputError.title = 'The title field is require'
+      }
+
+      if(formData.description.trim() === '' || formData.description.trim() === null){
+        intputError.description = 'The title field is require'
+      }
+      setError(intputError);
     }
 
   return (
@@ -67,14 +92,20 @@ export default function Blogs() {
     {/* Modal */}
     <Modal show={show} onHide={handleHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Modal title</Modal.Title>
+        <Modal.Title>Create New Blog</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-        <Form>
+        <Form onSubmit={handleSubmit}>
+          {/* title */}
           <Form.Group controlId="title" className='mb-3'>
             <Form.Label>Title</Form.Label>
-            <Form.Control placeholder='Enter title here...'/>
+            <Form.Control
+              placeholder='Enter title here...' 
+              name='title'
+              value={formData.title} 
+              onChange={handleChange} />
+            {error && error.title ? <span className='text-danger text-sm'>{error.title}</span> : ''}
           </Form.Group>
 
           <Form.Group controlId='description' className='mb-3'>
@@ -82,23 +113,26 @@ export default function Blogs() {
             <Form.Control 
               as='textarea'
               rows={4}
-              placeholder='Enter title here...'/>
+              placeholder='Enter description here...'
+              name="description"
+              value={formData.description}
+              onChange={handleChange}/>
+            {error && error.description ? <span className='text-danger text-sm'>{error.description}</span> : ''}
+            
           </Form.Group>
 
-          <Form.Group controlId='image' className='mb-3'>
+          {/* <Form.Group controlId='image' className='mb-3'>
             <Form.Label>Image</Form.Label>
             <Form.Control 
-              type='file' />
-          </Form.Group>
+              type='file'
+              name="image"
+              onChange={handleChange} />
+          </Form.Group> */}
 
+          <Button type="submit" variant='success' className='float-end'>Create</Button>
         </Form>
       </Modal.Body>
 
-      <Modal.Footer>
-        <Button variant="danger" onClick={handleHide}>Close</Button>
-        <Button variant='success'>Save</Button>
-
-      </Modal.Footer>
     </Modal>
 
     {/* <div className='blogs row'>
